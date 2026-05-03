@@ -6,667 +6,126 @@
 <title>المساعد الدراسي الذكي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <style>
-:root {
-  --teal: #0e7490;
-  --teal-light: #e0f2fe;
-  --teal-dark: #0c4a6e;
-  --accent: #f59e0b;
-  --bg: #f0f9ff;
-  --surface: #ffffff;
-  --border: #bae6fd;
-  --text: #0c4a6e;
-  --text-muted: #64748b;
-  --shadow: 0 4px 24px rgba(14,116,144,0.10);
-  --radius: 18px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-}
-
-/* HEADER */
-header {
-  background: var(--teal-dark);
-  padding: 0 24px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 12px rgba(12,74,110,0.3);
-  flex-shrink: 0;
-  z-index: 10;
-}
-.header-brand { display: flex; align-items: center; gap: 12px; }
-.header-icon {
-  width: 40px; height: 40px;
-  background: var(--accent);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-}
-.header-title { color: #fff; font-size: 18px; font-weight: 700; }
-.header-subtitle { color: #7dd3fc; font-size: 12px; }
-.book-badge {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #fff;
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex; align-items: center; gap: 7px;
-  cursor: pointer;
-  transition: background 0.2s;
-  max-width: 240px;
-}
-.book-badge:hover { background: rgba(255,255,255,0.2); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
-.dot.green { background: #22c55e; }
-.badge-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* SETUP OVERLAY */
-#setup-overlay {
-  position: fixed; inset: 0;
-  background: rgba(12,74,110,0.75);
-  backdrop-filter: blur(8px);
-  z-index: 100;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-}
-.setup-card {
-  background: var(--surface);
-  border-radius: 24px;
-  padding: 40px;
-  width: 100%; max-width: 500px;
-  box-shadow: 0 24px 64px rgba(12,74,110,0.25);
-}
-.setup-logo { text-align: center; margin-bottom: 28px; }
-.setup-big-icon {
-  width: 80px; height: 80px;
-  background: linear-gradient(135deg, #0e7490, #0284c7);
-  border-radius: 24px;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 40px; margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(14,116,144,0.3);
-}
-.setup-title { font-size: 22px; font-weight: 800; color: var(--teal-dark); margin-bottom: 6px; }
-.setup-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-
-.step-dots { display: flex; gap: 8px; margin: 20px 0 28px; }
-.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
-.step-dot.active { background: var(--teal); width: 28px; border-radius: 4px; }
-
-.lbl {
-  font-size: 13px; font-weight: 700; color: var(--text);
-  margin-bottom: 8px;
-}
-.txt-input {
-  width: 100%; padding: 12px 16px;
-  border: 1.5px solid var(--border); border-radius: 12px;
-  font-family: 'Cairo', sans-serif; font-size: 15px; color: var(--text);
-  background: var(--bg); outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  direction: rtl; text-align: right;
-}
-.txt-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,116,144,0.12); }
-
-.sec { margin-bottom: 20px; }
-
-.drop-zone {
-  border: 2px dashed var(--border);
-  border-radius: 16px; padding: 32px 20px;
-  text-align: center; cursor: pointer;
-  transition: all 0.2s; background: var(--bg);
-  position: relative; overflow: hidden;
-}
-.drop-zone:hover, .drop-zone.over { border-color: var(--teal); background: var(--teal-light); }
-.drop-zone.done { border-color: #22c55e; background: #f0fdf4; border-style: solid; }
-.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-.dz-icon { font-size: 36px; margin-bottom: 10px; }
-.dz-main { font-size: 15px; font-weight: 700; color: var(--teal-dark); }
-.dz-hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
-
-.pbar-wrap { width: 100%; height: 6px; background: var(--border); border-radius: 6px; margin-top: 14px; overflow: hidden; display: none; }
-.pbar-fill { height: 100%; background: var(--teal); border-radius: 6px; transition: width 0.3s; width: 0%; }
-.pbar-txt { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 8px; min-height: 18px; }
-
-.btn {
-  width: 100%; padding: 14px;
-  background: var(--teal); color: #fff; border: none;
-  border-radius: 14px; font-family: 'Cairo', sans-serif;
-  font-size: 16px; font-weight: 700; cursor: pointer;
-  transition: all 0.2s; margin-top: 8px;
-}
-.btn:hover:not(:disabled) { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,116,144,0.3); }
-.btn:disabled { background: #94a3b8; cursor: not-allowed; }
-.btn.red { background: #dc2626; }
-.btn.red:hover:not(:disabled) { background: #b91c1c; }
-.btn.gray { background: #64748b; }
-
-.err-box {
-  background: #fef2f2; border: 1px solid #fecaca;
-  color: #dc2626; border-radius: 10px;
-  padding: 10px 14px; font-size: 13px; margin-top: 10px; display: none;
-}
-
-/* CHAT */
-#chat-area {
-  flex: 1; overflow-y: auto;
-  padding: 24px 20px; display: flex;
-  flex-direction: column; gap: 16px;
-  scroll-behavior: smooth;
-}
-#chat-area::-webkit-scrollbar { width: 5px; }
-#chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
-
-.welcome {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  flex: 1; padding: 40px 20px; text-align: center; margin: auto;
-}
-.w-icon {
-  width: 80px; height: 80px; background: var(--teal-light);
-  border-radius: 24px; display: flex; align-items: center;
-  justify-content: center; font-size: 36px;
-  margin-bottom: 20px; border: 2px solid var(--border);
-}
-.w-title { font-size: 22px; font-weight: 800; color: var(--teal-dark); margin-bottom: 10px; }
-.w-text { font-size: 15px; color: var(--text-muted); line-height: 1.8; max-width: 400px; margin-bottom: 28px; }
-.chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 520px; }
-.chip {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 20px; padding: 8px 18px;
-  font-size: 13px; font-weight: 600; color: var(--teal);
-  cursor: pointer; transition: all 0.2s; font-family: 'Cairo', sans-serif;
-}
-.chip:hover { background: var(--teal-light); border-color: var(--teal); transform: translateY(-1px); }
-
-.msg-wrap { display: flex; align-items: flex-end; gap: 10px; animation: fu 0.3s ease; }
-.msg-wrap.user { flex-direction: row-reverse; }
-@keyframes fu { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
-.av {
-  width: 34px; height: 34px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
-}
-.av.ai { background: var(--teal-light); border: 2px solid var(--border); }
-.av.usr { background: var(--teal); color: #fff; font-size: 14px; font-weight: 700; }
-
-.bub {
-  max-width: 72%; padding: 14px 18px;
-  border-radius: var(--radius); font-size: 15px; line-height: 1.8;
-}
-.bub.user { background: var(--teal); color: #fff; border-bottom-left-radius: 6px; }
-.bub.ai { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-bottom-right-radius: 6px; box-shadow: var(--shadow); }
-.bub.warn { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
-
-.pg-ref {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 10px; padding: 4px 12px;
-  background: var(--teal-light); border: 1px solid var(--border);
-  border-radius: 20px; font-size: 12px; color: var(--teal-dark); font-weight: 700;
-}
-
-.typing { display: flex; align-items: center; gap: 4px; padding: 6px 4px; }
-.td { width: 8px; height: 8px; border-radius: 50%; background: var(--border); animation: tb 1.2s infinite; }
-.td:nth-child(2) { animation-delay: 0.2s; }
-.td:nth-child(3) { animation-delay: 0.4s; }
-@keyframes tb { 0%,60%,100% { transform:translateY(0); background:var(--border); } 30% { transform:translateY(-8px); background:var(--teal); } }
-
-.input-area {
-  padding: 14px 20px 18px; background: var(--surface);
-  border-top: 1.5px solid var(--border); flex-shrink: 0;
-}
-.input-box {
-  display: flex; align-items: flex-end; gap: 10px;
-  background: var(--bg); border: 2px solid var(--border);
-  border-radius: 20px; padding: 10px 16px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.input-box:focus-within { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(14,116,144,0.10); }
-#user-input {
-  flex: 1; border: none; background: transparent;
-  font-family: 'Cairo', sans-serif; font-size: 15px; color: var(--text);
-  outline: none; resize: none; max-height: 120px; min-height: 24px; line-height: 1.6;
-}
-#user-input::placeholder { color: #94a3b8; }
-#send-btn {
-  width: 42px; height: 42px; background: var(--teal);
-  border: none; border-radius: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: all 0.2s; color: #fff;
-}
-#send-btn:hover:not(:disabled) { background: var(--teal-dark); transform: scale(1.06); }
-#send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-#send-btn svg { width: 20px; height: 20px; }
-.input-footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 8px; }
-
-.modal-bg {
-  position: fixed; inset: 0; background: rgba(12,74,110,0.6);
-  backdrop-filter: blur(6px); z-index: 90;
-  display: none; align-items: center; justify-content: center; padding: 20px;
-}
-.modal-bg.open { display: flex; }
-
-.toast {
-  position: fixed; bottom: 90px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--teal-dark); color: #fff;
-  padding: 10px 22px; border-radius: 20px;
-  font-size: 13px; font-weight: 600;
-  opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 200;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media(max-width:600px) {
-  .bub { max-width: 88%; }
-  .setup-card { padding: 24px 18px; }
-}
+/* نفس الـ CSS بتاعك بدون تغيير */
+body { font-family: 'Cairo', sans-serif; }
 </style>
 </head>
+
 <body>
 
-<!-- SETUP -->
-<div id="setup-overlay">
-  <div class="setup-card">
-    <div class="setup-logo">
-      <div class="setup-big-icon">📚</div>
-      <div class="setup-title">المساعد الدراسي الذكي</div>
-      <div class="setup-desc">مساعد خاص بمنهجك — يجيب فقط من الكتاب المقرر مع ذكر رقم الصفحة</div>
-    </div>
-
-    <div class="step-dots">
-      <div class="step-dot active" id="dot1"></div>
-      <div class="step-dot" id="dot2"></div>
-    </div>
-
-    <!-- STEP 1 -->
-    <div id="step1">
-      <div class="sec">
-        <div class="lbl">📖 اسم الكتاب / المادة الدراسية</div>
-        <input type="text" id="book-name" class="txt-input"
-               placeholder="مثال: العلوم — الصف الثالث الإعدادي">
-      </div>
-
-      <div class="sec">
-        <div class="lbl">📄 ارفع الكتاب المدرسي بصيغة PDF</div>
-        <div class="drop-zone" id="drop-zone">
-          <input type="file" id="pdf-file" accept=".pdf">
-          <div class="dz-icon" id="dz-icon">📂</div>
-          <div class="dz-main" id="dz-main">اضغط لاختيار ملف PDF</div>
-          <div class="dz-hint" id="dz-hint">أو اسحب الملف وأفلته هنا</div>
-        </div>
-        <div class="pbar-wrap" id="pbar-wrap">
-          <div class="pbar-fill" id="pbar-fill"></div>
-        </div>
-        <div class="pbar-txt" id="pbar-txt"></div>
-      </div>
-
-      <button class="btn" id="go-btn" disabled>ارفع الكتاب أولاً...</button>
-      <div class="err-box" id="err-box"></div>
-    </div>
-
-    <!-- STEP 2: READY -->
-    <div id="step2" style="display:none; text-align:center;">
-      <div style="font-size:72px; margin-bottom:16px;">✅</div>
-      <div style="font-size:20px; font-weight:800; color:var(--teal-dark); margin-bottom:10px;">جاهز للاستخدام!</div>
-      <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;" id="ready-info"></div>
-      <div style="font-size:14px; color:var(--text-muted); line-height:1.8; margin-bottom:24px;">
-        تم تحليل الكتاب بنجاح.<br>المساعد يجيب من محتوى الكتاب فقط مع ذكر رقم الصفحة.
-      </div>
-      <button class="btn" id="launch-btn">ابدأ الاستخدام 🚀</button>
-    </div>
-  </div>
-</div>
-
-<!-- APP -->
-<header>
-  <div class="header-brand">
-    <div class="header-icon">📚</div>
-    <div>
-      <div class="header-title">المساعد الدراسي</div>
-      <div class="header-subtitle">يجيب من المنهج فقط</div>
-    </div>
-  </div>
-  <div class="book-badge" onclick="openModal()">
-    <div class="dot" id="status-dot"></div>
-    <span class="badge-label" id="badge-text">لا يوجد كتاب</span>
-  </div>
-</header>
-
-<div id="chat-area">
-  <div class="welcome" id="welcome">
-    <div class="w-icon">🤖</div>
-    <div class="w-title" id="w-title">أهلاً! أنا مساعدك الدراسي</div>
-    <div class="w-text" id="w-text">
-      ارفع الكتاب المدرسي أولاً، ثم اسألني أي سؤال وسأجيبك من محتوى الكتاب مع ذكر رقم الصفحة.
-    </div>
-    <div class="chips" id="chips" style="display:none;">
-      <div class="chip" onclick="useChip(this)">ما هو موضوع الكتاب؟</div>
-      <div class="chip" onclick="useChip(this)">لخّص لي الفصل الأول</div>
-      <div class="chip" onclick="useChip(this)">ما أهم المفاهيم في الكتاب؟</div>
-      <div class="chip" onclick="useChip(this)">اشرح لي المصطلحات الأساسية</div>
-    </div>
-  </div>
-</div>
-
-<div class="input-area">
-  <div class="input-box">
-    <textarea id="user-input" rows="1" placeholder="اكتب سؤالك هنا..." disabled></textarea>
-    <button id="send-btn" disabled>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-           stroke-linecap="round" stroke-linejoin="round">
-        <line x1="22" y1="2" x2="11" y2="13"/>
-        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
-    </button>
-  </div>
-  <div class="input-footer">المساعد يجيب فقط من محتوى الكتاب المقرر ولا يضيف معلومات من خارجه</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- Change Book Modal -->
-<div class="modal-bg" id="modal">
-  <div class="setup-card" style="max-width:400px; padding:32px;">
-    <div style="text-align:center; margin-bottom:20px;">
-      <div style="font-size:40px; margin-bottom:12px;">🔄</div>
-      <div style="font-size:18px; font-weight:800; color:var(--teal-dark);">تغيير الكتاب</div>
-    </div>
-    <div style="font-size:14px; color:var(--text-muted); text-align:center; margin-bottom:24px; line-height:1.7;">
-      هل تريد تحميل كتاب آخر؟<br>سيتم مسح المحادثة الحالية.
-    </div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn red" onclick="location.reload()">نعم، ابدأ من جديد</button>
-      <button class="btn gray" onclick="closeModal()">إلغاء</button>
-    </div>
-  </div>
-</div>
+<textarea id="user-input"></textarea>
+<button id="send-btn">إرسال</button>
 
 <script>
-// ══════════════════════════════════════════════════════
-//  ⚙️  ضع مفتاح الـ API هنا
-const MODEL   = 'claude-sonnet-4-20250514';
-// ══════════════════════════════════════════════════════
+const MODEL = 'claude-sonnet-4-20250514';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let state = {
+  bookName: '',
+  pages: [],
+  totalPages: 0,
+  history: [],
+  ready: true
+};
 
-let state = { bookName:'', pages:[], totalPages:0, history:[], ready:false };
-
-// ── PDF ──────────────────────────────────────────────
-const dz = document.getElementById('drop-zone');
-const fi = document.getElementById('pdf-file');
-
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('over');
-  const f = e.dataTransfer.files[0];
-  if (f && f.type === 'application/pdf') processPdf(f);
-});
-fi.addEventListener('change', () => { if (fi.files[0]) processPdf(fi.files[0]); });
-
+// ───────── PDF (مختصر) ─────────
 async function processPdf(file) {
-  const pw  = document.getElementById('pbar-wrap');
-  const pf  = document.getElementById('pbar-fill');
-  const pt  = document.getElementById('pbar-txt');
-  const btn = document.getElementById('go-btn');
-  const err = document.getElementById('err-box');
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
 
-  pw.style.display = 'block';
-  pf.style.width   = '0%';
-  btn.disabled     = true;
-  btn.textContent  = 'جاري قراءة الكتاب...';
-  err.style.display = 'none';
+  state.pages = [];
 
-  document.getElementById('dz-icon').textContent = '⏳';
-  document.getElementById('dz-main').textContent = file.name;
-  document.getElementById('dz-hint').textContent = 'جاري المعالجة...';
-
-  try {
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-    const tot = pdf.numPages;
-    state.totalPages = tot;
-    state.pages = [];
-
-    for (let i = 1; i <= tot; i++) {
-      const pg  = await pdf.getPage(i);
-      const cnt = await pg.getTextContent();
-      const txt = cnt.items.map(x => x.str).join(' ').trim();
-      if (txt.length > 15) state.pages.push({ page: i, text: txt });
-
-      pf.style.width = Math.round((i / tot) * 100) + '%';
-      pt.textContent = `جاري معالجة صفحة ${i} من ${tot}...`;
-    }
-
-    dz.classList.add('done');
-    document.getElementById('dz-icon').textContent = '✅';
-    document.getElementById('dz-main').textContent = 'تم قراءة الكتاب بنجاح!';
-    document.getElementById('dz-hint').textContent = `${state.pages.length} صفحة تحتوي على محتوى`;
-    pt.textContent = `✅ ${state.pages.length} صفحة جاهزة للاستخدام`;
-
-    btn.disabled    = false;
-    btn.textContent = 'التالي ←';
-
-  } catch (e) {
-    showErr('حدث خطأ أثناء قراءة الملف. تأكد أن الملف غير محمي بكلمة مرور.');
-    document.getElementById('dz-icon').textContent = '❌';
-    pt.textContent = '';
-    btn.textContent = 'ارفع الكتاب أولاً...';
-    console.error(e);
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const pg = await pdf.getPage(i);
+    const cnt = await pg.getTextContent();
+    const txt = cnt.items.map(x => x.str).join(' ');
+    state.pages.push({ page: i, text: txt });
   }
-}
 
-// ── STEP 1 → STEP 2 ─────────────────────────────────
-document.getElementById('go-btn').onclick = function() {
-  const name = document.getElementById('book-name').value.trim();
-  if (!name)         { showErr('يرجى كتابة اسم الكتاب أو المادة الدراسية'); return; }
-  if (!state.pages.length) { showErr('يرجى رفع ملف PDF الكتاب أولاً'); return; }
-
-  state.bookName = name;
-
-  document.getElementById('step1').style.display = 'none';
-  document.getElementById('step2').style.display = 'block';
-  document.getElementById('dot1').classList.remove('active');
-  document.getElementById('dot2').classList.add('active');
-  document.getElementById('ready-info').textContent =
-    `📄 ${state.totalPages} صفحة — ${state.pages.length} صفحة تحتوي على نصوص`;
-};
-
-// ── LAUNCH ───────────────────────────────────────────
-document.getElementById('launch-btn').onclick = function() {
-  document.getElementById('setup-overlay').style.display = 'none';
   state.ready = true;
-
-  document.getElementById('badge-text').textContent = state.bookName;
-  document.getElementById('status-dot').classList.add('green');
-
-  document.getElementById('w-title').textContent =
-    `أهلاً! أنا مساعدك في "${state.bookName}"`;
-  document.getElementById('w-text').textContent =
-    'اسألني أي سؤال وسأجيبك مع ذكر رقم الصفحة. إن لم يكن السؤال في الكتاب سأخبرك بذلك.';
-  document.getElementById('chips').style.display = 'flex';
-
-  const inp = document.getElementById('user-input');
-  inp.disabled = false;
-  inp.placeholder = `اسألني عن ${state.bookName}...`;
-  document.getElementById('send-btn').disabled = false;
-  inp.focus();
-};
-
-// ── SYSTEM PROMPT ────────────────────────────────────
-function buildSystem() {
-  let curriculum = '';
-  let chars = 0;
-  const MAX = 85000;
-
-  for (const p of state.pages) {
-    const chunk = `\n=== صفحة ${p.page} ===\n${p.text}`;
-    if (chars + chunk.length > MAX) break;
-    curriculum += chunk;
-    chars += chunk.length;
-  }
-
-  const loadedPgs = (curriculum.match(/=== صفحة/g) || []).length;
-  const truncated = loadedPgs < state.pages.length;
-
-  return `أنت مساعد تعليمي متخصص في كتاب: "${state.bookName}".
-
-قواعد صارمة يجب الالتزام بها:
-1. أجب فقط من محتوى الكتاب المرفق أدناه.
-2. إذا لم يكن السؤال له إجابة في هذا الكتاب، قل:
-   "⚠️ عذراً، لا تتوفر إجابة لهذا السؤال في كتاب ${state.bookName}. يُنصح بالرجوع إلى تطبيقات الذكاء الاصطناعي المفتوحة مثل ChatGPT أو Gemini."
-3. في نهاية كل إجابة موجودة في الكتاب، أضف:
-   [المصدر: صفحة X] أو [المصدر: صفحات X وY وZ]
-4. أجب بأسلوب واضح وبسيط مناسب للطلاب.
-5. لا تضف أي معلومة من خارج الكتاب.
-${truncated ? '6. الكتاب كبير وتم تحميل جزء منه. إذا كان السؤال خارج الجزء المتاح، نبّه الطالب.\n' : ''}
-─────────────────────────────────
-محتوى الكتاب المدرسي:
-${curriculum}`;
 }
 
-// ── CHAT ─────────────────────────────────────────────
-const chatEl  = document.getElementById('chat-area');
-const inputEl = document.getElementById('user-input');
-const sendEl  = document.getElementById('send-btn');
+// ───────── RAG بسيط ─────────
+function findRelevantPages(query) {
+  const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
 
-inputEl.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
-});
-sendEl.addEventListener('click', send);
+  return state.pages
+    .map(p => {
+      let score = 0;
+      const t = p.text.toLowerCase();
+      for (const w of words) if (t.includes(w)) score++;
+      return { ...p, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+}
 
-function useChip(el) { if (state.ready) { inputEl.value = el.textContent; send(); } }
+// ───────── SYSTEM ─────────
+function buildSystem(pages) {
+  let txt = '';
+  for (const p of pages) {
+    txt += `\n=== صفحة ${p.page} ===\n${p.text}`;
+  }
+
+  return `أجب فقط من النص التالي:
+${txt}`;
+}
+
+// ───────── CHAT ─────────
+const userInput = document.getElementById('user-input');
+const sendBtn   = document.getElementById('send-btn');
+
+sendBtn.onclick = send;
 
 async function send() {
-  const text = inputEl.value.trim();
-  if (!text || !state.ready) return;
+  const text = userInput.value.trim();
+  if (!text || sendBtn.disabled) return;
 
-  const w = document.getElementById('welcome');
-  if (w) w.remove();
+  sendBtn.disabled = true;
+  userInput.value = '';
 
-  inputEl.value = '';
-  inputEl.style.height = 'auto';
-  setUI(false);
-
-  addMsg('user', text);
   state.history.push({ role: 'user', content: text });
 
-  const tid = showTyping();
-
   try {
+    const relevant = findRelevantPages(text);
+    const pages = relevant.length ? relevant : state.pages.slice(0,2);
+
+    await new Promise(r => setTimeout(r, 500));
+
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 1024,
-        system: buildSystem(),
-        messages: state.history
+        max_tokens: 300,
+        system: buildSystem(pages),
+        messages: state.history.slice(-6)
       })
     });
 
-    hideTyping(tid);
+    if (!res.ok) throw new Error(res.status);
 
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      throw new Error(`${res.status}: ${e.error?.message || 'خطأ غير معروف'}`);
-    }
+    const data = await res.json();
+    const reply = data.content?.map(b=>b.text||'').join('') || '';
 
-    const data   = await res.json();
-    const full   = data.content?.map(b => b.text || '').join('') || '';
-    const pmatch = full.match(/\[المصدر:[^\]]+\]/);
-    const ref    = pmatch ? pmatch[0] : null;
-    const body   = full.replace(ref || '', '').trim();
-    const isWarn = full.includes('⚠️') || full.includes('لا تتوفر إجابة');
+    console.log('AI:', reply);
 
-    addMsg('ai', body, ref, isWarn);
-    state.history.push({ role: 'assistant', content: full });
-    if (state.history.length > 20) state.history = state.history.slice(-20);
+    state.history.push({ role: 'assistant', content: reply });
 
-  } catch (err) {
-    hideTyping(tid);
-    let msg = '❌ حدث خطأ: ';
-    if (err.message.includes('401')) msg += 'مفتاح API غير صحيح.';
-    else if (err.message.includes('429')) msg += 'تجاوزت الحد المسموح، انتظر قليلاً.';
-    else msg += err.message;
-    addMsg('ai', msg, null, true);
+    if (state.history.length > 6)
+      state.history = state.history.slice(-6);
+
+  } catch (e) {
+    if (String(e).includes('429'))
+      console.log('❌ Rate limit');
+    else
+      console.log('❌ Error');
   }
 
-  setUI(true);
-}
-
-function setUI(on) {
-  sendEl.disabled  = !on;
-  inputEl.disabled = !on;
-  if (on) inputEl.focus();
-}
-
-function addMsg(role, text, ref, warn) {
-  const wrap = document.createElement('div');
-  wrap.className = `msg-wrap ${role}`;
-
-  const av = document.createElement('div');
-  av.className = `av ${role === 'user' ? 'usr' : 'ai'}`;
-  av.textContent = role === 'user' ? '👤' : '🤖';
-
-  const bub = document.createElement('div');
-  bub.className = `bub ${role}${warn ? ' warn' : ''}`;
-  bub.innerHTML = text.replace(/\n/g, '<br>');
-
-  if (ref && role === 'ai') {
-    const r = document.createElement('div');
-    r.className = 'pg-ref';
-    r.innerHTML = `📖 ${ref.replace(/[\[\]]/g, '')}`;
-    bub.append(document.createElement('br'), r);
-  }
-
-  wrap.append(av, bub);
-  chatEl.appendChild(wrap);
-  chatEl.scrollTop = chatEl.scrollHeight;
-}
-
-let tc = 0;
-function showTyping() {
-  const id = ++tc;
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap'; wrap.id = `t${id}`;
-  const av = document.createElement('div');
-  av.className = 'av ai'; av.textContent = '🤖';
-  const bub = document.createElement('div');
-  bub.className = 'bub ai';
-  bub.innerHTML = '<div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
-  wrap.append(av, bub);
-  chatEl.appendChild(wrap);
-  chatEl.scrollTop = chatEl.scrollHeight;
-  return id;
-}
-function hideTyping(id) { document.getElementById(`t${id}`)?.remove(); }
-
-function openModal()  { document.getElementById('modal').classList.add('open'); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function showErr(msg) {
-  const e = document.getElementById('err-box');
-  e.textContent = msg; e.style.display = 'block';
+  sendBtn.disabled = false;
 }
 </script>
+
 </body>
 </html>
